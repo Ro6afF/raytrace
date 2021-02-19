@@ -6,11 +6,25 @@ use rtrs::Point;
 use rtrs::Ray;
 use rtrs::Vector;
 
-fn calc_color(r: Ray) -> Color {
+fn hit_sphere(center: &Point, radius: f64, ray: &Ray) -> bool {
+    let oc = ray.origin - *center;
+    let a = ray.direction * ray.direction;
+    let b = 2.0 * oc * ray.direction;
+    let c = oc * oc - radius * radius;
+
+    let discriminant = b * b - 4.0 * a * c;
+
+    discriminant >= 0.0 
+}
+
+fn calc_color(r: &Ray) -> Color {
+    if hit_sphere(&Point::new(0.0, 0.0, -1.0), 0.5, r) {
+        return Color::new(255.0, 0.0, 0.0);
+    }
     let mut unit = r.direction.clone();
     unit.normailze();
     let t = (unit.x + 1.0) / 2.0;
-    t as f32 * Color::new(255.0, 0.0, 255.0) + (1.0 - t) as f32 * Color::new(0.0, 255.0, 0.0)
+    t as f32 * Color::new(0.0, 0.0, 255.0) + (1.0 - t) as f32 * Color::new(0.0, 255.0, 0.0)
 }
 
 fn main() {
@@ -33,6 +47,7 @@ fn main() {
 
     // Rendering
     for i in 0..height {
+        println!("Line {} / {}", i + 1, height);
         for j in 0..width {
             let ray = Ray::new(
                 origin,
@@ -41,7 +56,7 @@ fn main() {
                     + (i as f64 / (height - 1) as f64) * vertical
                     - origin,
             );
-            img.write_pixel(calc_color(ray));
+            img.write_pixel(calc_color(&ray));
         }
     }
 }

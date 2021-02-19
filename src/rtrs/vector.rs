@@ -1,7 +1,6 @@
 use std::ops;
 
 #[derive(Debug, Clone, Copy)]
-
 pub struct Vector {
     pub x: f64,
     pub y: f64,
@@ -70,6 +69,14 @@ impl ops::Div<f64> for Vector {
 
     fn div(self, rhs: f64) -> Vector {
         self * (1.0 / rhs)
+    }
+}
+
+impl ops::Mul for Vector {
+    type Output = f64;
+
+    fn mul(self, rhs: Vector) -> f64 {
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 }
 
