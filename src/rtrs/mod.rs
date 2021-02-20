@@ -10,3 +10,5 @@ pub use self::vector::Vector;
 
 mod ray;
 pub use self::ray::Ray;
+
+pub mod objects;

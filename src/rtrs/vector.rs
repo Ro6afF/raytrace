@@ -80,4 +80,12 @@ impl ops::Mul for Vector {
     }
 }
 
+impl ops::Neg for Vector {
+    type Output = Vector;
+
+    fn neg(self) -> Vector {
+        self * -1.0
+    }
+}
+
 pub type Point = Vector;

@@ -16,7 +16,9 @@ impl Image {
 
     pub fn write_pixel(&mut self, color: Color) {
         self.file
-            .write_all(format!("{} {} {}\n", color.r as i32, color.g as i32, color.b as i32).as_bytes())
+            .write_all(
+                format!("{} {} {}\n", color.r as i32, color.g as i32, color.b as i32).as_bytes(),
+            )
             .unwrap();
     }
 }
