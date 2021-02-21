@@ -21,10 +21,34 @@ impl ops::Add for Color {
     }
 }
 
+impl ops::AddAssign for Color {
+    fn add_assign(&mut self, rhs: Color) {
+        self.r += rhs.r;
+        self.g += rhs.g;
+        self.b += rhs.b;
+    }
+}
+
 impl ops::Mul<Color> for f32 {
     type Output = Color;
 
     fn mul(self, rhs: Color) -> Color {
         Color::new(rhs.r * self, rhs.g * self, rhs.b * self)
+    }
+}
+
+impl ops::Mul<f32> for Color {
+    type Output = Color;
+
+    fn mul(self, rhs: f32) -> Color {
+        rhs * self
+    }
+}
+
+impl ops::Div<f32> for Color {
+    type Output = Color;
+
+    fn div(self, rhs: f32) -> Color {
+        self * (1.0 / rhs)
     }
 }

@@ -10,10 +10,10 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Sphere{
+    pub fn new(center: Point, radius: f64) -> Sphere {
         Sphere {
             center: center,
-            radius:radius
+            radius: radius,
         }
     }
 }

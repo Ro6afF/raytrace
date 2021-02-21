@@ -1,6 +1,6 @@
-use super::Hitable;
 use super::super::Ray;
 use super::HitRecord;
+use super::Hitable;
 
 pub struct HitableList {
     pub objects: Vec<Box<dyn Hitable>>,
@@ -14,7 +14,6 @@ impl HitableList {
     pub fn add(&mut self, obj: Box<dyn Hitable>) {
         self.objects.push(obj);
     }
-
 
     pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool {
         let mut hited = false;

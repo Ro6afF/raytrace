@@ -9,3 +9,6 @@ pub use sphere::Sphere;
 
 mod hitable_list;
 pub use hitable_list::HitableList;
+
+mod camera;
+pub use camera::Camera;
