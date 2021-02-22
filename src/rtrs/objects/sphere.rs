@@ -33,6 +33,7 @@ impl Hitable for Sphere {
         let discriminant_sqrt = discriminant.sqrt();
 
         let mut root = (-b - discriminant_sqrt) / a;
+        
         if root < t_min || root > t_max {
             root = (-b + discriminant_sqrt) / a;
             if root < t_min || root > t_max {
