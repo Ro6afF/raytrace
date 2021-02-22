@@ -1,5 +1,6 @@
 mod rtrs;
 
+use rayon::prelude::*;
 use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
 use rtrs::objects::HitableList;
@@ -9,12 +10,21 @@ use rtrs::Image;
 use rtrs::Point;
 use rtrs::Ray;
 use rtrs::Vector;
+use std::sync::Mutex;
 
 fn random_unit_vector() -> Vector {
-    let mut vec = Vector::new(rand::random::<f64>() * 2.0 - 1.0, rand::random::<f64>() * 2.0 - 1.0, rand::random::<f64>() * 2.0 - 1.0);
+    let mut vec = Vector::new(
+        rand::random::<f64>() * 2.0 - 1.0,
+        rand::random::<f64>() * 2.0 - 1.0,
+        rand::random::<f64>() * 2.0 - 1.0,
+    );
 
     while vec.lenght() > 1.0 {
-        vec = Vector::new(rand::random::<f64>() * 2.0 - 1.0, rand::random::<f64>() * 2.0 - 1.0, rand::random::<f64>() * 2.0 - 1.0);
+        vec = Vector::new(
+            rand::random::<f64>() * 2.0 - 1.0,
+            rand::random::<f64>() * 2.0 - 1.0,
+            rand::random::<f64>() * 2.0 - 1.0,
+        );
     }
     vec.normailze();
 
@@ -44,7 +54,7 @@ fn main() {
     let aspect_ratio = 16.0 / 9.0;
     let height = 600;
     let width = (height as f64 * aspect_ratio) as i32;
-    let mut img = Image::new("asdf.ppm", width, height);
+    let img = Mutex::new(Image::new("asdf.ppm", width, height));
     let spp = 100;
     let max_depth = 50;
 
@@ -58,7 +68,7 @@ fn main() {
     // Rendering
     for i in 0..height {
         println!("Line {} / {}", i + 1, height);
-        for j in 0..width {
+        (0..width).into_par_iter().for_each(|j| {
             let mut color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..spp {
                 let ray = cam.get_ray(
@@ -67,7 +77,8 @@ fn main() {
                 );
                 color += calc_color(&ray, &scene, max_depth);
             }
-            img.write_pixel(color / spp as f32);
-        }
+            img.lock().unwrap().set_pixel(j, i, color / spp as f32);
+        });
     }
+    img.lock().unwrap().write();
 }

@@ -3,7 +3,7 @@ use super::HitRecord;
 use super::Hitable;
 
 pub struct HitableList {
-    pub objects: Vec<Box<dyn Hitable>>,
+    pub objects: Vec<Box<dyn Hitable + Send + Sync>>,
 }
 
 impl HitableList {
@@ -11,7 +11,7 @@ impl HitableList {
         HitableList { objects: vec![] }
     }
 
-    pub fn add(&mut self, obj: Box<dyn Hitable>) {
+    pub fn add(&mut self, obj: Box<dyn Hitable + Send + Sync>) {
         self.objects.push(obj);
     }
 
