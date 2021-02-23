@@ -1,19 +1,22 @@
+use super::super::materials::Material;
 use super::super::Point;
 use super::super::Ray;
 use super::HitRecord;
 use super::Hitable;
+use std::sync::Arc;
 
-#[derive(Debug, Clone, Copy)]
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
+    pub material: Arc<dyn Material + Send + Sync>,
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64) -> Sphere {
+    pub fn new(center: Point, radius: f64, material: Arc<dyn Material + Send + Sync>) -> Sphere {
         Sphere {
             center: center,
             radius: radius,
+            material: material,
         }
     }
 }
@@ -45,6 +48,7 @@ impl Hitable for Sphere {
         record.p = ray.at(root);
         let outward_normal = (record.p - self.center) / self.radius;
         record.set_face_normal(ray, &outward_normal);
+        record.material = Some(self.material.clone());
 
         true
     }

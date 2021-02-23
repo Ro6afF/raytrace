@@ -1,13 +1,15 @@
+use super::super::materials::Material;
 use super::super::Point;
 use super::super::Ray;
 use super::super::Vector;
+use std::sync::Arc;
 
-#[derive(Debug, Clone, Copy)]
 pub struct HitRecord {
     pub p: Point,
     pub normal: Vector,
     pub t: f64,
     pub front_face: bool,
+    pub material: Option<Arc<dyn Material + Send + Sync>>,
 }
 
 impl HitRecord {
@@ -17,6 +19,7 @@ impl HitRecord {
             normal: Vector::new(0.0, 0.0, 0.0),
             t: 0.0,
             front_face: false,
+            material: None,
         }
     }
 

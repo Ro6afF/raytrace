@@ -1,6 +1,8 @@
 mod rtrs;
 
 use rayon::prelude::*;
+use rtrs::materials::Lambertian;
+use rtrs::materials::Metal;
 use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
 use rtrs::objects::HitableList;
@@ -10,26 +12,8 @@ use rtrs::Image;
 use rtrs::Point;
 use rtrs::Ray;
 use rtrs::Vector;
+use std::sync::Arc;
 use std::sync::Mutex;
-
-fn random_unit_vector() -> Vector {
-    let mut vec = Vector::new(
-        rand::random::<f64>() * 2.0 - 1.0,
-        rand::random::<f64>() * 2.0 - 1.0,
-        rand::random::<f64>() * 2.0 - 1.0,
-    );
-
-    while vec.lenght() > 1.0 {
-        vec = Vector::new(
-            rand::random::<f64>() * 2.0 - 1.0,
-            rand::random::<f64>() * 2.0 - 1.0,
-            rand::random::<f64>() * 2.0 - 1.0,
-        );
-    }
-    vec.normailze();
-
-    vec
-}
 
 fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
     if depth <= 0 {
@@ -39,10 +23,19 @@ fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
     let mut rec = HitRecord::blank();
 
     if scene.hit(r, 0.001, f64::INFINITY, &mut rec) {
-        let target = rec.p + rec.normal + random_unit_vector();
-
-        return 0.5 * calc_color(&Ray::new(rec.p, target - rec.p), scene, depth - 1);
+        let mut scattered = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0));
+        let mut attenuation = Color::new(0.0, 0.0, 0.0);
+        match &rec.material {
+            Some(x) => {
+                if x.scatter(r, &rec, &mut attenuation, &mut scattered) {
+                    return attenuation * calc_color(&scattered, scene, depth - 1);
+                }
+            }
+            _ => {}
+        }
+        return Color::new(0.0, 0.0, 0.0);
     }
+
     let mut unit = r.direction.clone();
     unit.normailze();
     let t = (unit.x + 1.0) / 2.0;
@@ -62,8 +55,26 @@ fn main() {
 
     // Scene
     let mut scene = HitableList::new();
-    scene.add(Box::new(Sphere::new(Point::new(0.0, 0.0, -1.0), 0.5)));
-    scene.add(Box::new(Sphere::new(Point::new(0.0, 100.5, -1.0), 100.0)));
+    scene.add(Arc::new(Sphere::new(
+        Point::new(0.0, 100.5, -1.0),
+        100.0,
+        Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+    )));
+    scene.add(Arc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
+    )));
+    scene.add(Arc::new(Sphere::new(
+        Point::new(-1.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8))),
+    )));
+    scene.add(Arc::new(Sphere::new(
+        Point::new(1.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2))),
+    )));
 
     // Rendering
     for i in 0..height {

@@ -16,8 +16,35 @@ impl Vector {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
+    pub fn normailzed(&self) -> Vector {
+        Vector {
+            x: self.x / self.lenght(),
+            y: self.y / self.lenght(),
+            z: self.z / self.lenght(),
+        }
+    }
+
     pub fn normailze(&mut self) {
         *self = *self / self.lenght();
+    }
+
+    pub fn random_unit() -> Vector {
+        let mut vec = Vector::new(
+            rand::random::<f64>() * 2.0 - 1.0,
+            rand::random::<f64>() * 2.0 - 1.0,
+            rand::random::<f64>() * 2.0 - 1.0,
+        );
+
+        while vec.lenght() > 1.0 {
+            vec = Vector::new(
+                rand::random::<f64>() * 2.0 - 1.0,
+                rand::random::<f64>() * 2.0 - 1.0,
+                rand::random::<f64>() * 2.0 - 1.0,
+            );
+        }
+        vec.normailze();
+
+        vec
     }
 }
 

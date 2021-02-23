@@ -29,6 +29,18 @@ impl ops::AddAssign for Color {
     }
 }
 
+impl ops::Mul for Color {
+    type Output = Color;
+
+    fn mul(self, rhs: Color) -> Color {
+        Color {
+            r: self.r * rhs.r,
+            g: self.g * rhs.g,
+            b: self.b * rhs.b,
+        }
+    }
+}
+
 impl ops::Mul<Color> for f32 {
     type Output = Color;
 

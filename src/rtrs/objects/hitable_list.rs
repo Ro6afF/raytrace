@@ -1,9 +1,10 @@
 use super::super::Ray;
 use super::HitRecord;
 use super::Hitable;
+use std::sync::Arc;
 
 pub struct HitableList {
-    pub objects: Vec<Box<dyn Hitable + Send + Sync>>,
+    pub objects: Vec<Arc<dyn Hitable + Send + Sync>>,
 }
 
 impl HitableList {
@@ -11,7 +12,7 @@ impl HitableList {
         HitableList { objects: vec![] }
     }
 
-    pub fn add(&mut self, obj: Box<dyn Hitable + Send + Sync>) {
+    pub fn add(&mut self, obj: Arc<dyn Hitable + Send + Sync>) {
         self.objects.push(obj);
     }
 
@@ -29,6 +30,7 @@ impl HitableList {
                     record.front_face = temp_record.front_face;
                     record.normal = temp_record.normal;
                     record.t = temp_record.t;
+                    record.material = temp_record.material.clone();
                 }
             }
         }
