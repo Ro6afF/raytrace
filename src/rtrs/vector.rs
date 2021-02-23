@@ -28,7 +28,7 @@ impl Vector {
         *self = *self / self.lenght();
     }
 
-    pub fn random_unit() -> Vector {
+    pub fn random_in_unit_sphere() -> Vector {
         let mut vec = Vector::new(
             rand::random::<f64>() * 2.0 - 1.0,
             rand::random::<f64>() * 2.0 - 1.0,
@@ -42,9 +42,12 @@ impl Vector {
                 rand::random::<f64>() * 2.0 - 1.0,
             );
         }
-        vec.normailze();
 
         vec
+    }
+
+    pub fn random_unit() -> Vector {
+        Vector::random_in_unit_sphere().normailzed()
     }
 }
 

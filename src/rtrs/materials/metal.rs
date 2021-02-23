@@ -1,15 +1,20 @@
 use super::super::objects::HitRecord;
 use super::super::Color;
 use super::super::Ray;
+use super::super::Vector;
 use super::Material;
 
 pub struct Metal {
     pub albedo: Color,
+    pub fuzz: f64,
 }
 
 impl Metal {
-    pub fn new(albedo: Color) -> Metal {
-        Metal { albedo: albedo }
+    pub fn new(albedo: Color, fuzz: f64) -> Metal {
+        Metal {
+            albedo: albedo,
+            fuzz: fuzz,
+        }
     }
 }
 
@@ -22,7 +27,8 @@ impl Material for Metal {
         scattered: &mut Ray,
     ) -> bool {
         let norm_in = ray_in.direction.normailzed();
-        let reflected = norm_in - 2.0 * (norm_in * record.normal) * record.normal;
+        let reflected = norm_in - 2.0 * (norm_in * record.normal) * record.normal
+            + self.fuzz * Vector::random_in_unit_sphere();
 
         scattered.origin = record.p;
         scattered.direction.x = reflected.x;

@@ -1,6 +1,7 @@
 mod rtrs;
 
 use rayon::prelude::*;
+use rtrs::materials::Dielectric;
 use rtrs::materials::Lambertian;
 use rtrs::materials::Metal;
 use rtrs::objects::Camera;
@@ -56,24 +57,24 @@ fn main() {
     // Scene
     let mut scene = HitableList::new();
     scene.add(Arc::new(Sphere::new(
-        Point::new(0.0, 100.5, -1.0),
+        Point::new(0.0, -100.5, -1.0),
         100.0,
         Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
     )));
     scene.add(Arc::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0),
-        0.5,
-        Arc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3))),
-    )));
-    scene.add(Arc::new(Sphere::new(
         Point::new(-1.0, 0.0, -1.0),
         0.5,
-        Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8))),
+        Arc::new(Dielectric::new(1.5)),
+    )));
+    scene.add(Arc::new(Sphere::new(
+        Point::new(0.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.1)),
     )));
     scene.add(Arc::new(Sphere::new(
         Point::new(1.0, 0.0, -1.0),
         0.5,
-        Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2))),
+        Arc::new(Lambertian::new(Color::new(0.8, 0.6, 0.2))),
     )));
 
     // Rendering
