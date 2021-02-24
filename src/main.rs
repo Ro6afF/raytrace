@@ -52,7 +52,15 @@ fn main() {
     let spp = 100;
     let max_depth = 50;
 
-    let cam = Camera::new();
+    let cam = Camera::new(
+        Point::new(-2.0, 2.0, 1.0),
+        Point::new(0.0, 0.0, -1.0),
+        Vector::new(0.0, 1.0, 0.0),
+        20.0,
+        aspect_ratio,
+        2.0,
+        (Point::new(-2.0, 2.0, 1.0) - Point::new(0.0, 0.0, -1.0)).lenght(),
+    );
 
     // Scene
     let mut scene = HitableList::new();

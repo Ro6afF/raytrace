@@ -49,6 +49,24 @@ impl Vector {
     pub fn random_unit() -> Vector {
         Vector::random_in_unit_sphere().normailzed()
     }
+
+    pub fn random_in_unit_disc_xy() -> Vector {
+        let mut vec = Vector::new(
+            rand::random::<f64>() * 2.0 - 1.0,
+            rand::random::<f64>() * 2.0 - 1.0,
+            0.0,
+        );
+
+        while vec.lenght() >= 1.0 {
+            vec = Vector::new(
+                rand::random::<f64>() * 2.0 - 1.0,
+                rand::random::<f64>() * 2.0 - 1.0,
+                0.0,
+            );
+        }
+
+        vec
+    }
 }
 
 impl ops::Add for Vector {
@@ -115,6 +133,18 @@ impl ops::Neg for Vector {
 
     fn neg(self) -> Vector {
         self * -1.0
+    }
+}
+
+impl ops::BitXor for Vector {
+    type Output = Vector;
+
+    fn bitxor(self, rhs: Vector) -> Vector {
+        Vector::new(
+            self.y * rhs.z - self.z * rhs.y,
+            self.z * rhs.x - self.x * rhs.z,
+            self.x * rhs.y - self.y * rhs.x,
+        )
     }
 }
 
