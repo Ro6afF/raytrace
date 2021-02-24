@@ -11,6 +11,14 @@ impl Color {
     pub fn new(r: f32, g: f32, b: f32) -> Color {
         Color { r: r, g: g, b: b }
     }
+
+    pub fn random() -> Color {
+        Color::new(
+            rand::random::<f32>(),
+            rand::random::<f32>(),
+            rand::random::<f32>(),
+        )
+    }
 }
 
 impl ops::Add for Color {

@@ -3,6 +3,7 @@ mod rtrs;
 use rayon::prelude::*;
 use rtrs::materials::Dielectric;
 use rtrs::materials::Lambertian;
+use rtrs::materials::Material;
 use rtrs::materials::Metal;
 use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
@@ -39,8 +40,67 @@ fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
 
     let mut unit = r.direction.clone();
     unit.normailze();
-    let t = (unit.x + 1.0) / 2.0;
-    t as f32 * Color::new(1.0, 1.0, 0.0) + (1.0 - t) as f32 * Color::new(0.0, 1.0, 1.0)
+    let t = (unit.y + 1.0) / 2.0;
+    t as f32 * Color::new(1.0, 1.0, 1.0) + (1.0 - t) as f32 * Color::new(0.5, 0.7, 1.0)
+}
+
+fn random_scene() -> HitableList {
+    let mut world = HitableList::new();
+
+    // Ground
+    world.add(Arc::new(Sphere::new(
+        Point::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5))),
+    )));
+
+    for i in -13..13 {
+        for j in -13..13 {
+            let mat_choise = rand::random::<f64>();
+            let material: Arc<dyn Material + Send + Sync>;
+
+            if mat_choise < 0.7 {
+                let albedo = Color::random();
+                material = Arc::new(Lambertian::new(albedo));
+            } else if mat_choise < 0.9 {
+                let albedo = Color::random();
+                let fuzz = rand::random::<f64>() * 0.5;
+                material = Arc::new(Metal::new(albedo, fuzz));
+            } else {
+                material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * rand::random::<f64>()));
+            }
+
+            world.add(Arc::new(Sphere::new(
+                Point::new(
+                    i as f64 + 0.9 * rand::random::<f64>(),
+                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                    j as f64 + 0.9 * rand::random::<f64>(),
+                ),
+                0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                material,
+            )));
+        }
+    }
+
+    world.add(Arc::new(Sphere::new(
+        Point::new(0.0, 1.0, 0.0),
+        1.0,
+        Arc::new(Dielectric::new(1.5)),
+    )));
+
+    world.add(Arc::new(Sphere::new(
+        Point::new(-4.0, 1.0, 0.0),
+        1.0,
+        Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1))),
+    )));
+
+    world.add(Arc::new(Sphere::new(
+        Point::new(4.0, 1.0, 0.0),
+        1.0,
+        Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0)),
+    )));
+
+    world
 }
 
 fn main() {
@@ -49,41 +109,21 @@ fn main() {
     let height = 600;
     let width = (height as f64 * aspect_ratio) as i32;
     let img = Mutex::new(Image::new("asdf.ppm", width, height));
-    let spp = 100;
+    let spp = 1000;
     let max_depth = 50;
 
     let cam = Camera::new(
-        Point::new(-2.0, 2.0, 1.0),
-        Point::new(0.0, 0.0, -1.0),
+        Point::new(13.0, 2.0, 3.0),
+        Point::new(0.0, 0.0, 0.0),
         Vector::new(0.0, 1.0, 0.0),
         20.0,
         aspect_ratio,
-        2.0,
-        (Point::new(-2.0, 2.0, 1.0) - Point::new(0.0, 0.0, -1.0)).lenght(),
+        0.1,
+        10.0,
     );
 
     // Scene
-    let mut scene = HitableList::new();
-    scene.add(Arc::new(Sphere::new(
-        Point::new(0.0, -100.5, -1.0),
-        100.0,
-        Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
-    )));
-    scene.add(Arc::new(Sphere::new(
-        Point::new(-1.0, 0.0, -1.0),
-        0.5,
-        Arc::new(Dielectric::new(1.5)),
-    )));
-    scene.add(Arc::new(Sphere::new(
-        Point::new(0.0, 0.0, -1.0),
-        0.5,
-        Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.1)),
-    )));
-    scene.add(Arc::new(Sphere::new(
-        Point::new(1.0, 0.0, -1.0),
-        0.5,
-        Arc::new(Lambertian::new(Color::new(0.8, 0.6, 0.2))),
-    )));
+    let scene = random_scene();
 
     // Rendering
     for i in 0..height {
