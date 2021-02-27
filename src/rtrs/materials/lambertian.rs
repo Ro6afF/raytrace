@@ -19,13 +19,14 @@ impl Lambertian {
 impl Material for Lambertian {
     fn scatter(
         &self,
-        _ray_in: &Ray,
+        ray_in: &Ray,
         record: &HitRecord,
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
         scattered.origin = record.p;
         scattered.direction = record.normal + Vector::random_unit();
+        scattered.time = ray_in.time;
 
         let v = self.albedo.value(record.u, record.v, &record.p);
 

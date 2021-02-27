@@ -8,6 +8,7 @@ use rtrs::materials::Metal;
 use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
 use rtrs::objects::HitableList;
+use rtrs::objects::MovingSphere;
 use rtrs::objects::Sphere;
 use rtrs::textures::CheckerTexture;
 use rtrs::textures::SolidColor;
@@ -27,7 +28,7 @@ fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
     let mut rec = HitRecord::blank();
 
     if scene.hit(r, 0.001, f64::INFINITY, &mut rec) {
-        let mut scattered = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0));
+        let mut scattered = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0), 0.0);
         let mut attenuation = Color::new(0.0, 0.0, 0.0);
         match &rec.material {
             Some(x) => {
@@ -75,15 +76,32 @@ fn random_scene() -> HitableList {
                 material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * rand::random::<f64>()));
             }
 
-            world.add(Arc::new(Sphere::new(
-                Point::new(
+            if rand::random::<f64>() < 0.7 {
+                world.add(Arc::new(Sphere::new(
+                    Point::new(
+                        i as f64 + 0.9 * rand::random::<f64>(),
+                        0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                        j as f64 + 0.9 * rand::random::<f64>(),
+                    ),
+                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                    material,
+                )));
+            } else {
+                let center0 = Point::new(
                     i as f64 + 0.9 * rand::random::<f64>(),
                     0.1 + (0.3 - 0.1) * rand::random::<f64>(),
                     j as f64 + 0.9 * rand::random::<f64>(),
-                ),
-                0.1 + (0.3 - 0.1) * rand::random::<f64>(),
-                material,
-            )));
+                );
+                let center1 = center0 + Point::new(0.0, rand::random::<f64>() * 0.5, 0.0);
+                world.add(Arc::new(MovingSphere::new(
+                    center0,
+                    center1,
+                    0.0,
+                    1.0,
+                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                    material,
+                )));
+            }
         }
     }
 
@@ -127,6 +145,8 @@ fn main() {
         aspect_ratio,
         0.1,
         10.0,
+        0.0,
+        1.0,
     );
 
     // Scene

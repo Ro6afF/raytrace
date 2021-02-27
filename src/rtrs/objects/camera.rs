@@ -10,6 +10,8 @@ pub struct Camera {
     u: Vector,
     v: Vector,
     lens_radius: f64,
+    time0: f64,
+    time1: f64,
 }
 
 impl Camera {
@@ -21,6 +23,8 @@ impl Camera {
         aspect_ratio: f64,
         apreture: f64,
         focus_dist: f64,
+        time0: f64,
+        time1: f64,
     ) -> Camera {
         let theta = vfov * std::f64::consts::PI / 180.0;
         let h = (theta / 2.0).tan();
@@ -42,6 +46,8 @@ impl Camera {
             u: u,
             v: v,
             lens_radius: apreture / 2.0,
+            time0: time0,
+            time1: time1,
         }
     }
 
@@ -52,6 +58,7 @@ impl Camera {
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + x * self.horizontal + y * self.vertical - self.origin - offset,
+            self.time0 + (self.time1 - self.time0) * rand::random::<f64>(),
         )
     }
 }

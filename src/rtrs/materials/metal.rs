@@ -34,6 +34,8 @@ impl Material for Metal {
         scattered.direction.x = reflected.x;
         scattered.direction.y = reflected.y;
         scattered.direction.z = reflected.z;
+        scattered.time = ray_in.time;
+
         attenuation.r = self.albedo.r;
         attenuation.g = self.albedo.g;
         attenuation.b = self.albedo.b;

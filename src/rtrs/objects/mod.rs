@@ -12,3 +12,6 @@ pub use hitable_list::HitableList;
 
 mod camera;
 pub use camera::Camera;
+
+mod moving_sphere;
+pub use moving_sphere::MovingSphere;

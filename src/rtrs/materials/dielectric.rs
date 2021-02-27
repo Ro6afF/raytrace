@@ -56,6 +56,7 @@ impl Material for Dielectric {
 
         scattered.origin = record.p;
         scattered.direction = direction;
+        scattered.time = ray_in.time;
 
         true
     }
