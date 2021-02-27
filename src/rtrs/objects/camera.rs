@@ -9,7 +9,7 @@ pub struct Camera {
     vertical: Vector,
     u: Vector,
     v: Vector,
-    lens_radius: f64
+    lens_radius: f64,
 }
 
 impl Camera {
@@ -32,7 +32,7 @@ impl Camera {
         let v = w ^ u;
 
         let horizontal = focus_dist * viewport_width * u;
-        let vertical = - focus_dist * viewport_height * v;
+        let vertical = -focus_dist * viewport_height * v;
 
         Camera {
             origin: look_from,
@@ -41,7 +41,7 @@ impl Camera {
             lower_left_corner: look_from - horizontal / 2.0 - vertical / 2.0 - focus_dist * w,
             u: u,
             v: v,
-            lens_radius: apreture / 2.0
+            lens_radius: apreture / 2.0,
         }
     }
 

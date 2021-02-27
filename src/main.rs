@@ -9,6 +9,8 @@ use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
 use rtrs::objects::HitableList;
 use rtrs::objects::Sphere;
+use rtrs::textures::CheckerTexture;
+use rtrs::textures::SolidColor;
 use rtrs::Color;
 use rtrs::Image;
 use rtrs::Point;
@@ -51,7 +53,10 @@ fn random_scene() -> HitableList {
     world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
-        Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5))),
+        Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
+            SolidColor::new(Color::new(0.2, 0.3, 0.1)),
+            SolidColor::new(Color::new(0.9, 0.9, 0.9)),
+        )))),
     )));
 
     for i in -13..13 {
@@ -61,7 +66,7 @@ fn random_scene() -> HitableList {
 
             if mat_choise < 0.7 {
                 let albedo = Color::random();
-                material = Arc::new(Lambertian::new(albedo));
+                material = Arc::new(Lambertian::new(Arc::new(SolidColor::new(albedo))));
             } else if mat_choise < 0.9 {
                 let albedo = Color::random();
                 let fuzz = rand::random::<f64>() * 0.5;
@@ -91,7 +96,9 @@ fn random_scene() -> HitableList {
     world.add(Arc::new(Sphere::new(
         Point::new(-4.0, 1.0, 0.0),
         1.0,
-        Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1))),
+        Arc::new(Lambertian::new(Arc::new(SolidColor::new(Color::new(
+            0.4, 0.2, 0.1,
+        ))))),
     )));
 
     world.add(Arc::new(Sphere::new(
@@ -109,7 +116,7 @@ fn main() {
     let height = 600;
     let width = (height as f64 * aspect_ratio) as i32;
     let img = Mutex::new(Image::new("asdf.ppm", width, height));
-    let spp = 1000;
+    let spp = 10;
     let max_depth = 50;
 
     let cam = Camera::new(

@@ -19,6 +19,14 @@ impl Sphere {
             material: material,
         }
     }
+
+    fn get_uv(&self, p: &Point, u: &mut f64, v: &mut f64) {
+        let theta = (-p.y).acos();
+        let phi = (-p.z).atan2(p.x) + std::f64::consts::PI;
+
+        *u = phi / (2.0 * std::f64::consts::PI);
+        *v = theta / std::f64::consts::PI;
+    }
 }
 
 impl Hitable for Sphere {
@@ -49,6 +57,7 @@ impl Hitable for Sphere {
         let outward_normal = (record.p - self.center) / self.radius;
         record.set_face_normal(ray, &outward_normal);
         record.material = Some(self.material.clone());
+        self.get_uv(&outward_normal, &mut record.u, &mut record.v);
 
         true
     }

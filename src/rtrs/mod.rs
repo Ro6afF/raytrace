@@ -13,3 +13,4 @@ pub use self::ray::Ray;
 
 pub mod materials;
 pub mod objects;
+pub mod textures;
