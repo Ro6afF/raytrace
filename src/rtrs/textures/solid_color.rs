@@ -2,6 +2,7 @@ use super::super::Color;
 use super::super::Point;
 use super::Texture;
 
+#[derive(Debug)]
 pub struct SolidColor {
     color: Color,
 }

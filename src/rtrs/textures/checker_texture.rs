@@ -2,14 +2,16 @@ use super::super::Color;
 use super::super::Point;
 use super::SolidColor;
 use super::Texture;
+use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct CheckerTexture {
-    odd: SolidColor,
-    even: SolidColor,
+    odd: Arc<SolidColor>,
+    even: Arc<SolidColor>,
 }
 
 impl CheckerTexture {
-    pub fn new(even: SolidColor, odd: SolidColor) -> CheckerTexture {
+    pub fn new(even: Arc<SolidColor>, odd: Arc<SolidColor>) -> CheckerTexture {
         CheckerTexture {
             even: even,
             odd: odd,

@@ -1,18 +1,21 @@
 use super::super::materials::Material;
 use super::super::Point;
 use super::super::Ray;
+use super::super::Vector;
+use super::Aabb;
 use super::HitRecord;
 use super::Hitable;
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct Sphere {
     pub center: Point,
     pub radius: f64,
-    pub material: Arc<dyn Material + Send + Sync>,
+    pub material: Arc<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Point, radius: f64, material: Arc<dyn Material + Send + Sync>) -> Sphere {
+    pub fn new(center: Point, radius: f64, material: Arc<dyn Material>) -> Sphere {
         Sphere {
             center: center,
             radius: radius,
@@ -59,6 +62,12 @@ impl Hitable for Sphere {
         record.material = Some(self.material.clone());
         self.get_uv(&outward_normal, &mut record.u, &mut record.v);
 
+        true
+    }
+
+    fn bounding_box(&self, _time0: f64, _time1: f64, output_box: &mut Aabb) -> bool {
+        output_box.min = self.center - Vector::new(self.radius, self.radius, self.radius);
+        output_box.max = self.center + Vector::new(self.radius, self.radius, self.radius);
         true
     }
 }

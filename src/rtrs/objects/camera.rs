@@ -58,7 +58,7 @@ impl Camera {
         Ray::new(
             self.origin + offset,
             self.lower_left_corner + x * self.horizontal + y * self.vertical - self.origin - offset,
-            self.time0 + (self.time1 - self.time0) * rand::random::<f64>(),
+            self.time0 + (self.time1 - self.time0) * fastrand::f64(),
         )
     }
 }

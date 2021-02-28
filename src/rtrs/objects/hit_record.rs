@@ -4,12 +4,13 @@ use super::super::Ray;
 use super::super::Vector;
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct HitRecord {
     pub p: Point,
     pub normal: Vector,
     pub t: f64,
     pub front_face: bool,
-    pub material: Option<Arc<dyn Material + Send + Sync>>,
+    pub material: Option<Arc<dyn Material>>,
     pub u: f64,
     pub v: f64,
 }

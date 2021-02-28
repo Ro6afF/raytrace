@@ -3,6 +3,7 @@ use super::super::Color;
 use super::super::Ray;
 use super::Material;
 
+#[derive(Debug)]
 pub struct Dielectric {
     pub refraction_index: f64,
 }
@@ -46,7 +47,7 @@ impl Material for Dielectric {
         let reflectance = r0 + (1.0 - r0) * (1.0 - cos_theta).powi(5);
 
         let direction;
-        if refraction_ratio * sin_theta > 1.0 || reflectance > rand::random() {
+        if refraction_ratio * sin_theta > 1.0 || reflectance > fastrand::f64() {
             direction = unit_direction - (2.0 * unit_direction * record.normal) * record.normal;
         } else {
             let prep = refraction_ratio * (unit_direction + cos_theta * record.normal);

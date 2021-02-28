@@ -13,11 +13,7 @@ impl Color {
     }
 
     pub fn random() -> Color {
-        Color::new(
-            rand::random::<f32>(),
-            rand::random::<f32>(),
-            rand::random::<f32>(),
-        )
+        Color::new(fastrand::f32(), fastrand::f32(), fastrand::f32())
     }
 }
 

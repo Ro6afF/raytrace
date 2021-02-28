@@ -5,8 +5,10 @@ use rtrs::materials::Dielectric;
 use rtrs::materials::Lambertian;
 use rtrs::materials::Material;
 use rtrs::materials::Metal;
+use rtrs::objects::BhvNode;
 use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
+use rtrs::objects::Hitable;
 use rtrs::objects::HitableList;
 use rtrs::objects::MovingSphere;
 use rtrs::objects::Sphere;
@@ -20,14 +22,14 @@ use rtrs::Vector;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
+fn calc_color(r: &Ray, scene: &dyn Hitable, depth: i32) -> Color {
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
 
     let mut rec = HitRecord::blank();
 
-    if scene.hit(r, 0.001, f64::INFINITY, &mut rec) {
+    if (*scene).hit(r, 0.001, f64::INFINITY, &mut rec) {
         let mut scattered = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0), 0.0);
         let mut attenuation = Color::new(0.0, 0.0, 0.0);
         match &rec.material {
@@ -41,7 +43,7 @@ fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let mut unit = r.direction.clone();
+    let mut unit = r.direction;
     unit.normailze();
     let t = (unit.y + 1.0) / 2.0;
     t as f32 * Color::new(1.0, 1.0, 1.0) + (1.0 - t) as f32 * Color::new(0.5, 0.7, 1.0)
@@ -49,56 +51,55 @@ fn calc_color(r: &Ray, scene: &HitableList, depth: i32) -> Color {
 
 fn random_scene() -> HitableList {
     let mut world = HitableList::new();
-
     // Ground
     world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
         1000.0,
         Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
-            SolidColor::new(Color::new(0.2, 0.3, 0.1)),
-            SolidColor::new(Color::new(0.9, 0.9, 0.9)),
+            Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
+            Arc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
         )))),
     )));
 
     for i in -13..13 {
         for j in -13..13 {
-            let mat_choise = rand::random::<f64>();
-            let material: Arc<dyn Material + Send + Sync>;
+            let mat_choise = fastrand::f64();
+            let material: Arc<dyn Material>;
 
             if mat_choise < 0.7 {
                 let albedo = Color::random();
                 material = Arc::new(Lambertian::new(Arc::new(SolidColor::new(albedo))));
             } else if mat_choise < 0.9 {
                 let albedo = Color::random();
-                let fuzz = rand::random::<f64>() * 0.5;
-                material = Arc::new(Metal::new(albedo, fuzz));
+                let fuzz = fastrand::f64() * 0.5;
+                material = Arc::new(Metal::new(Arc::new(SolidColor::new(albedo)), fuzz));
             } else {
-                material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * rand::random::<f64>()));
+                material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * fastrand::f64()));
             }
 
-            if rand::random::<f64>() < 0.7 {
+            if fastrand::f64() < 0.7 {
                 world.add(Arc::new(Sphere::new(
                     Point::new(
-                        i as f64 + 0.9 * rand::random::<f64>(),
-                        0.1 + (0.3 - 0.1) * rand::random::<f64>(),
-                        j as f64 + 0.9 * rand::random::<f64>(),
+                        i as f64 + 0.9 * fastrand::f64(),
+                        0.1 + (0.3 - 0.1) * fastrand::f64(),
+                        j as f64 + 0.9 * fastrand::f64(),
                     ),
-                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                    0.1 + (0.3 - 0.1) * fastrand::f64(),
                     material,
                 )));
             } else {
                 let center0 = Point::new(
-                    i as f64 + 0.9 * rand::random::<f64>(),
-                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
-                    j as f64 + 0.9 * rand::random::<f64>(),
+                    i as f64 + 0.9 * fastrand::f64(),
+                    0.1 + (0.3 - 0.1) * fastrand::f64(),
+                    j as f64 + 0.9 * fastrand::f64(),
                 );
-                let center1 = center0 + Point::new(0.0, rand::random::<f64>() * 0.5, 0.0);
+                let center1 = center0 + Point::new(0.0, fastrand::f64() * 0.5, 0.0);
                 world.add(Arc::new(MovingSphere::new(
                     center0,
                     center1,
                     0.0,
                     1.0,
-                    0.1 + (0.3 - 0.1) * rand::random::<f64>(),
+                    0.1 + (0.3 - 0.1) * fastrand::f64(),
                     material,
                 )));
             }
@@ -122,7 +123,10 @@ fn random_scene() -> HitableList {
     world.add(Arc::new(Sphere::new(
         Point::new(4.0, 1.0, 0.0),
         1.0,
-        Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0)),
+        Arc::new(Metal::new(
+            Arc::new(SolidColor::new(Color::new(0.7, 0.6, 0.5))),
+            0.0,
+        )),
     )));
 
     world
@@ -150,7 +154,8 @@ fn main() {
     );
 
     // Scene
-    let scene = random_scene();
+    let mut balls = random_scene();
+    let scene = BhvNode::new(&mut balls, 0.0, 1.0);
 
     // Rendering
     for i in 0..height {
@@ -159,8 +164,8 @@ fn main() {
             let mut color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..spp {
                 let ray = cam.get_ray(
-                    (j as f64 + rand::random::<f64>()) / (width - 1) as f64,
-                    (i as f64 + rand::random::<f64>()) / (height - 1) as f64,
+                    (j as f64 + fastrand::f64()) / (width - 1) as f64,
+                    (i as f64 + fastrand::f64()) / (height - 1) as f64,
                 );
                 color += calc_color(&ray, &scene, max_depth);
             }

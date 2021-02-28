@@ -1,16 +1,19 @@
 use super::super::objects::HitRecord;
+use super::super::textures::Texture;
 use super::super::Color;
 use super::super::Ray;
 use super::super::Vector;
 use super::Material;
+use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct Metal {
-    pub albedo: Color,
+    pub albedo: Arc<dyn Texture>,
     pub fuzz: f64,
 }
 
 impl Metal {
-    pub fn new(albedo: Color, fuzz: f64) -> Metal {
+    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Metal {
         Metal {
             albedo: albedo,
             fuzz: fuzz,
@@ -36,9 +39,11 @@ impl Material for Metal {
         scattered.direction.z = reflected.z;
         scattered.time = ray_in.time;
 
-        attenuation.r = self.albedo.r;
-        attenuation.g = self.albedo.g;
-        attenuation.b = self.albedo.b;
+        let v = self.albedo.value(record.u, record.v, &record.p);
+
+        attenuation.r = v.r;
+        attenuation.g = v.g;
+        attenuation.b = v.b;
 
         scattered.direction * record.normal > 0.0
     }

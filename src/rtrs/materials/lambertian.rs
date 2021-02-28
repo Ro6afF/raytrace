@@ -6,12 +6,13 @@ use super::super::Vector;
 use super::Material;
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct Lambertian {
-    pub albedo: Arc<dyn Texture + Send + Sync>,
+    pub albedo: Arc<dyn Texture>,
 }
 
 impl Lambertian {
-    pub fn new(albedo: Arc<dyn Texture + Send + Sync>) -> Lambertian {
+    pub fn new(albedo: Arc<dyn Texture>) -> Lambertian {
         Lambertian { albedo: albedo }
     }
 }

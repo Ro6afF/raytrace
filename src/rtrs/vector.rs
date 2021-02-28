@@ -30,16 +30,16 @@ impl Vector {
 
     pub fn random_in_unit_sphere() -> Vector {
         let mut vec = Vector::new(
-            rand::random::<f64>() * 2.0 - 1.0,
-            rand::random::<f64>() * 2.0 - 1.0,
-            rand::random::<f64>() * 2.0 - 1.0,
+            fastrand::f64() * 2.0 - 1.0,
+            fastrand::f64() * 2.0 - 1.0,
+            fastrand::f64() * 2.0 - 1.0,
         );
 
         while vec.lenght() > 1.0 {
             vec = Vector::new(
-                rand::random::<f64>() * 2.0 - 1.0,
-                rand::random::<f64>() * 2.0 - 1.0,
-                rand::random::<f64>() * 2.0 - 1.0,
+                fastrand::f64() * 2.0 - 1.0,
+                fastrand::f64() * 2.0 - 1.0,
+                fastrand::f64() * 2.0 - 1.0,
             );
         }
 
@@ -52,15 +52,15 @@ impl Vector {
 
     pub fn random_in_unit_disc_xy() -> Vector {
         let mut vec = Vector::new(
-            rand::random::<f64>() * 2.0 - 1.0,
-            rand::random::<f64>() * 2.0 - 1.0,
+            fastrand::f64() * 2.0 - 1.0,
+            fastrand::f64() * 2.0 - 1.0,
             0.0,
         );
 
         while vec.lenght() >= 1.0 {
             vec = Vector::new(
-                rand::random::<f64>() * 2.0 - 1.0,
-                rand::random::<f64>() * 2.0 - 1.0,
+                fastrand::f64() * 2.0 - 1.0,
+                fastrand::f64() * 2.0 - 1.0,
                 0.0,
             );
         }

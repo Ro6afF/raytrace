@@ -2,16 +2,19 @@ use super::super::materials::Material;
 use super::super::objects::HitRecord;
 use super::super::Point;
 use super::super::Ray;
+use super::super::Vector;
+use super::Aabb;
 use super::Hitable;
 use std::sync::Arc;
 
+#[derive(Debug)]
 pub struct MovingSphere {
     pub center0: Point,
     pub center1: Point,
     pub time0: f64,
     pub time1: f64,
     pub radius: f64,
-    pub material: Arc<dyn Material + Send + Sync>,
+    pub material: Arc<dyn Material>,
 }
 
 impl MovingSphere {
@@ -21,7 +24,7 @@ impl MovingSphere {
         time0: f64,
         time1: f64,
         radius: f64,
-        material: Arc<dyn Material + Send + Sync>,
+        material: Arc<dyn Material>,
     ) -> MovingSphere {
         MovingSphere {
             center0: center0,
@@ -76,6 +79,23 @@ impl Hitable for MovingSphere {
         record.set_face_normal(ray, &outward_normal);
         record.material = Some(self.material.clone());
         self.get_uv(&outward_normal, &mut record.u, &mut record.v);
+
+        true
+    }
+
+    fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut Aabb) -> bool {
+        let box0 = Aabb::new(
+            self.center(time0) - Vector::new(self.radius, self.radius, self.radius),
+            self.center(time0) + Vector::new(self.radius, self.radius, self.radius),
+        );
+        let box1 = Aabb::new(
+            self.center(time1) - Vector::new(self.radius, self.radius, self.radius),
+            self.center(time1) + Vector::new(self.radius, self.radius, self.radius),
+        );
+        let sbox = Aabb::surrounding_box(&box0, &box1);
+
+        output_box.max = sbox.max;
+        output_box.min = sbox.min;
 
         true
     }
