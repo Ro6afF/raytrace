@@ -39,6 +39,7 @@ impl Image {
     pub fn write(&mut self) {
         for i in 0..self.height {
             for j in 0..self.width {
+                self.image[j as usize][i as usize].clamp();
                 self.file
                     .write_all(
                         format!(

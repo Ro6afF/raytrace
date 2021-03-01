@@ -1,6 +1,7 @@
 use super::super::objects::HitRecord;
 use super::super::textures::Texture;
 use super::super::Color;
+use super::super::Point;
 use super::super::Ray;
 use super::super::Vector;
 use super::Material;
@@ -46,5 +47,9 @@ impl Material for Metal {
         attenuation.b = v.b;
 
         scattered.direction * record.normal > 0.0
+    }
+
+    fn emitted(&self, _u: f64, _v: f64, _p: &Point) -> Color {
+        Color::new(0.0, 0.0, 0.0)
     }
 }

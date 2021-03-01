@@ -9,3 +9,6 @@ pub use metal::Metal;
 
 mod dielectric;
 pub use dielectric::Dielectric;
+
+mod diffuse_light;
+pub use diffuse_light::DiffuseLight;

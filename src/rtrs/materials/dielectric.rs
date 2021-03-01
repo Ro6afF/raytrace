@@ -1,6 +1,7 @@
 use super::super::objects::HitRecord;
 use super::super::textures::Texture;
 use super::super::Color;
+use super::super::Point;
 use super::super::Ray;
 use super::Material;
 use std::sync::Arc;
@@ -66,5 +67,9 @@ impl Material for Dielectric {
         scattered.time = ray_in.time;
 
         true
+    }
+
+    fn emitted(&self, _u: f64, _v: f64, _p: &Point) -> Color {
+        Color::new(0.0, 0.0, 0.0)
     }
 }

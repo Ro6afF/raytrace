@@ -15,6 +15,20 @@ impl Color {
     pub fn random() -> Color {
         Color::new(fastrand::f32(), fastrand::f32(), fastrand::f32())
     }
+
+    pub fn clamp(&mut self) {
+        if self.r > 1.0 {
+            self.r = 1.0;
+        }
+
+        if self.g > 1.0 {
+            self.g = 1.0;
+        }
+
+        if self.b > 1.0 {
+            self.b = 1.0;
+        }
+    }
 }
 
 impl ops::Add for Color {

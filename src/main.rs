@@ -2,6 +2,7 @@ mod rtrs;
 
 use rayon::prelude::*;
 use rtrs::materials::Dielectric;
+use rtrs::materials::DiffuseLight;
 use rtrs::materials::Lambertian;
 use rtrs::materials::Material;
 use rtrs::materials::Metal;
@@ -22,7 +23,7 @@ use rtrs::Vector;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-fn calc_color(r: &Ray, scene: &dyn Hitable, depth: i32) -> Color {
+fn calc_color(r: &Ray, scene: &dyn Hitable, background: &Color, depth: i32) -> Color {
     if depth <= 0 {
         return Color::new(0.0, 0.0, 0.0);
     }
@@ -34,23 +35,32 @@ fn calc_color(r: &Ray, scene: &dyn Hitable, depth: i32) -> Color {
         let mut attenuation = Color::new(0.0, 0.0, 0.0);
         match &rec.material {
             Some(x) => {
-                if x.scatter(r, &rec, &mut attenuation, &mut scattered) {
-                    return attenuation * calc_color(&scattered, scene, depth - 1);
+                let emited = x.emitted(rec.u, rec.v, &rec.p);
+
+                if !x.scatter(r, &rec, &mut attenuation, &mut scattered) {
+                    return emited;
                 }
+                return emited + attenuation * calc_color(&scattered, scene, background, depth - 1);
             }
             _ => {}
         }
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    let mut unit = r.direction;
-    unit.normailze();
-    let t = (unit.y + 1.0) / 2.0;
-    t as f32 * Color::new(1.0, 1.0, 1.0) + (1.0 - t) as f32 * Color::new(0.5, 0.7, 1.0)
+    *background
 }
 
 fn random_scene() -> HitableList {
     let mut world = HitableList::new();
+    // Lamp
+    world.add(Arc::new(Sphere::new(
+        Point::new(0.0, 100.0, 0.0),
+        50.0,
+        Arc::new(DiffuseLight::new(Arc::new(SolidColor::new(Color::new(
+            1.0, 1.0, 0.98,
+        ))))),
+    )));
+
     // Ground
     world.add(Arc::new(Sphere::new(
         Point::new(0.0, -1000.0, 0.0),
@@ -169,7 +179,7 @@ fn main() {
                     (j as f64 + fastrand::f64()) / (width - 1) as f64,
                     (i as f64 + fastrand::f64()) / (height - 1) as f64,
                 );
-                color += calc_color(&ray, &scene, max_depth);
+                color += calc_color(&ray, &scene, &(Color::new(0.78, 0.87, 1.0) * 0.3), max_depth);
             }
             img.lock().unwrap().set_pixel(j, i, color / spp as f32);
         });
