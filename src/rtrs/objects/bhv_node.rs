@@ -14,9 +14,9 @@ pub struct BhvNode {
 }
 
 impl BhvNode {
-    pub fn new(list: &mut HitableList, time0: f64, time1: f64) -> BhvNode {
+    pub fn new(list: &HitableList, time0: f64, time1: f64) -> BhvNode {
         let len = list.objects.len();
-        BhvNode::new_vec(&mut list.objects, 0, len, time0, time1)
+        BhvNode::new_vec(&list.objects, 0, len, time0, time1)
     }
 
     fn box_compare(a: &Arc<dyn Hitable>, b: &Arc<dyn Hitable>, axis: i32) -> Ordering {
@@ -51,7 +51,7 @@ impl BhvNode {
     }
 
     pub fn new_vec(
-        list: &mut Vec<Arc<dyn Hitable>>,
+        list: &Vec<Arc<dyn Hitable>>,
         start: usize,
         end: usize,
         time0: f64,
@@ -60,6 +60,9 @@ impl BhvNode {
         let left;
         let right;
         let aabb;
+        let mut list = list[start..end].to_vec();
+        let end = list.len();
+        let start = 0;
 
         let axis = fastrand::i32(0..3);
         let comparator = if axis == 0 {
@@ -70,24 +73,15 @@ impl BhvNode {
             BhvNode::box_z_compare
         };
 
-        let object_span = end - start;
-        if object_span == 1 {
+        if end == 1 {
             left = list[start].clone();
             right = list[start].clone();
-        } else if object_span == 2 {
-            if comparator(&list[start], &list[start + 1]) == Ordering::Less {
-                left = list[start].clone();
-                right = list[start + 1].clone();
-            } else {
-                right = list[start].clone();
-                left = list[start + 1].clone();
-            }
         } else {
             list.sort_by(|a, b| comparator(a, b));
 
-            let mid = start + object_span / 2;
-            left = Arc::new(BhvNode::new_vec(list, start, mid, time0, time1));
-            right = Arc::new(BhvNode::new_vec(list, mid, end, time0, time1));
+            let mid = (start + end) / 2;
+            left = Arc::new(BhvNode::new_vec(&list, start, mid, time0, time1));
+            right = Arc::new(BhvNode::new_vec(&list, mid, end, time0, time1));
         }
 
         let mut lbox = Aabb::blank();

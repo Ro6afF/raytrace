@@ -1,17 +1,21 @@
 use super::super::objects::HitRecord;
+use super::super::textures::Texture;
 use super::super::Color;
 use super::super::Ray;
 use super::Material;
+use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Dielectric {
     pub refraction_index: f64,
+    pub albedo: Arc<dyn Texture>,
 }
 
 impl Dielectric {
-    pub fn new(refraction_index: f64) -> Dielectric {
+    pub fn new(refraction_index: f64, albedo: Arc<dyn Texture>) -> Dielectric {
         Dielectric {
             refraction_index: refraction_index,
+            albedo: albedo,
         }
     }
 }
@@ -24,9 +28,11 @@ impl Material for Dielectric {
         attenuation: &mut Color,
         scattered: &mut Ray,
     ) -> bool {
-        attenuation.r = 1.0;
-        attenuation.g = 1.0;
-        attenuation.b = 1.0;
+        let v = self.albedo.value(record.u, record.v, &record.p);
+
+        attenuation.r = v.r;
+        attenuation.g = v.g;
+        attenuation.b = v.b;
 
         let refraction_ratio = if record.front_face {
             1.0 / self.refraction_index

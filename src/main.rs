@@ -65,16 +65,15 @@ fn random_scene() -> HitableList {
         for j in -13..13 {
             let mat_choise = fastrand::f64();
             let material: Arc<dyn Material>;
+            let albedo = Arc::new(SolidColor::new(Color::random()));
 
             if mat_choise < 0.7 {
-                let albedo = Color::random();
-                material = Arc::new(Lambertian::new(Arc::new(SolidColor::new(albedo))));
+                material = Arc::new(Lambertian::new(albedo));
             } else if mat_choise < 0.9 {
-                let albedo = Color::random();
                 let fuzz = fastrand::f64() * 0.5;
-                material = Arc::new(Metal::new(Arc::new(SolidColor::new(albedo)), fuzz));
+                material = Arc::new(Metal::new(albedo, fuzz));
             } else {
-                material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * fastrand::f64()));
+                material = Arc::new(Dielectric::new(1.2 + (1.8 - 1.2) * fastrand::f64(), albedo));
             }
 
             if fastrand::f64() < 0.7 {
@@ -109,7 +108,10 @@ fn random_scene() -> HitableList {
     world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
-        Arc::new(Dielectric::new(1.5)),
+        Arc::new(Dielectric::new(
+            1.5,
+            Arc::new(SolidColor::new(Color::new(0.5, 0.5, 0.0))),
+        )),
     )));
 
     world.add(Arc::new(Sphere::new(
@@ -154,8 +156,8 @@ fn main() {
     );
 
     // Scene
-    let mut balls = random_scene();
-    let scene = BhvNode::new(&mut balls, 0.0, 1.0);
+    let balls = random_scene();
+    let scene = BhvNode::new(&balls, 0.0, 1.0);
 
     // Rendering
     for i in 0..height {
