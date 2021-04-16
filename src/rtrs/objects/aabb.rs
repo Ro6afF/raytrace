@@ -42,27 +42,27 @@ impl Aabb {
     pub fn surrounding_box(a: &Aabb, b: &Aabb) -> Aabb {
         let mut small = a.min;
         let mut big = a.max;
-        
+
         if small.x > b.min.x {
             small.x = b.min.x;
         }
-        
+
         if small.y > b.min.y {
             small.y = b.min.y;
         }
-        
+
         if small.z > b.min.z {
             small.z = b.min.z;
         }
-        
+
         if big.x < b.max.x {
             big.x = b.max.x;
         }
-        
+
         if big.y < b.max.y {
             big.y = b.max.y;
         }
-        
+
         if big.z < b.max.z {
             big.z = b.max.z;
         }

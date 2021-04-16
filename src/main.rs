@@ -13,6 +13,7 @@ use rtrs::objects::Hitable;
 use rtrs::objects::HitableList;
 use rtrs::objects::MovingSphere;
 use rtrs::objects::Sphere;
+use rtrs::objects::Triangle;
 use rtrs::textures::CheckerTexture;
 use rtrs::textures::SolidColor;
 use rtrs::Color;
@@ -20,6 +21,7 @@ use rtrs::Image;
 use rtrs::Point;
 use rtrs::Ray;
 use rtrs::Vector;
+use rtrs::EPSILON;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -30,7 +32,7 @@ fn calc_color(r: &Ray, scene: &dyn Hitable, background: &Color, depth: i32) -> C
 
     let mut rec = HitRecord::blank();
 
-    if (*scene).hit(r, 0.001, f64::INFINITY, &mut rec) {
+    if (*scene).hit(r, EPSILON, f64::INFINITY, &mut rec) {
         let mut scattered = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0), 0.0);
         let mut attenuation = Color::new(0.0, 0.0, 0.0);
         match &rec.material {
@@ -62,9 +64,19 @@ fn random_scene() -> HitableList {
     )));
 
     // Ground
-    world.add(Arc::new(Sphere::new(
-        Point::new(0.0, -1000.0, 0.0),
-        1000.0,
+    world.add(Arc::new(Triangle::new(
+        Point::new(-100.0, 0.0, -100.0),
+        Point::new(100.0, 0.0, 100.0),
+        Point::new(-100.0, 0.0, 100.0),
+        Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
+            Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
+            Arc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
+        )))),
+    )));
+    world.add(Arc::new(Triangle::new(
+        Point::new(-100.0, 0.0, -100.0),
+        Point::new(100.0, 0.0, 100.0),
+        Point::new(100.0, 0.0, -100.0),
         Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
             Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
             Arc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
@@ -150,7 +162,7 @@ fn main() {
     let height = 600;
     let width = (height as f64 * aspect_ratio) as i32;
     let img = Mutex::new(Image::new("asdf.ppm", width, height));
-    let spp = 10;
+    let spp = 1000;
     let max_depth = 50;
 
     let cam = Camera::new(
@@ -179,7 +191,12 @@ fn main() {
                     (j as f64 + fastrand::f64()) / (width - 1) as f64,
                     (i as f64 + fastrand::f64()) / (height - 1) as f64,
                 );
-                color += calc_color(&ray, &scene, &(Color::new(0.78, 0.87, 1.0) * 0.3), max_depth);
+                color += calc_color(
+                    &ray,
+                    &scene,
+                    &(Color::new(0.78, 0.87, 1.0) * 0.3),
+                    max_depth,
+                );
             }
             img.lock().unwrap().set_pixel(j, i, color / spp as f32);
         });

@@ -21,3 +21,6 @@ pub use aabb::Aabb;
 
 mod bhv_node;
 pub use bhv_node::BhvNode;
+
+mod triangle;
+pub use triangle::Triangle;
