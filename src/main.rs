@@ -11,10 +11,10 @@ use rtrs::objects::Camera;
 use rtrs::objects::HitRecord;
 use rtrs::objects::Hitable;
 use rtrs::objects::HitableList;
+use rtrs::objects::Model;
 use rtrs::objects::MovingSphere;
 use rtrs::objects::Sphere;
 use rtrs::objects::Triangle;
-use rtrs::textures::CheckerTexture;
 use rtrs::textures::SolidColor;
 use rtrs::Color;
 use rtrs::Image;
@@ -68,19 +68,17 @@ fn random_scene() -> HitableList {
         Point::new(-100.0, 0.0, -100.0),
         Point::new(100.0, 0.0, 100.0),
         Point::new(-100.0, 0.0, 100.0),
-        Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
-            Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
-            Arc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
-        )))),
+        Arc::new(Lambertian::new(Arc::new(SolidColor::new(Color::new(
+            0.2, 0.3, 0.1,
+        ))))),
     )));
     world.add(Arc::new(Triangle::new(
         Point::new(-100.0, 0.0, -100.0),
         Point::new(100.0, 0.0, 100.0),
         Point::new(100.0, 0.0, -100.0),
-        Arc::new(Lambertian::new(Arc::new(CheckerTexture::new(
-            Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
-            Arc::new(SolidColor::new(Color::new(0.9, 0.9, 0.9))),
-        )))),
+        Arc::new(Lambertian::new(Arc::new(SolidColor::new(Color::new(
+            0.2, 0.3, 0.1,
+        ))))),
     )));
 
     for i in -13..13 {
@@ -152,6 +150,8 @@ fn random_scene() -> HitableList {
             0.0,
         )),
     )));
+
+    world.add(Arc::new(Model::from_file("test.obj")));
 
     world
 }

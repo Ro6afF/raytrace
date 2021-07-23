@@ -14,8 +14,8 @@ pub struct Metal {
 }
 
 impl Metal {
-    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Metal {
-        Metal {
+    pub fn new(albedo: Arc<dyn Texture>, fuzz: f64) -> Self {
+        Self {
             albedo: albedo,
             fuzz: fuzz,
         }

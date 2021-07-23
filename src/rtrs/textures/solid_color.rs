@@ -8,8 +8,8 @@ pub struct SolidColor {
 }
 
 impl SolidColor {
-    pub fn new(c: Color) -> SolidColor {
-        SolidColor { color: c }
+    pub fn new(c: Color) -> Self {
+        Self { color: c }
     }
 }
 

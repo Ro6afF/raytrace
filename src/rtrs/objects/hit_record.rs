@@ -16,8 +16,8 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    pub fn blank() -> HitRecord {
-        HitRecord {
+    pub fn blank() -> Self {
+        Self {
             p: Point::new(0.0, 0.0, 0.0),
             normal: Vector::new(0.0, 0.0, 0.0),
             t: 0.0,

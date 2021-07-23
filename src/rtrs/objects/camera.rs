@@ -25,7 +25,7 @@ impl Camera {
         focus_dist: f64,
         time0: f64,
         time1: f64,
-    ) -> Camera {
+    ) -> Self {
         let theta = vfov * std::f64::consts::PI / 180.0;
         let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h;
@@ -38,7 +38,7 @@ impl Camera {
         let horizontal = focus_dist * viewport_width * u;
         let vertical = -focus_dist * viewport_height * v;
 
-        Camera {
+        Self {
             origin: look_from,
             horizontal: horizontal,
             vertical: vertical,

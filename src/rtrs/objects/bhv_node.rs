@@ -14,9 +14,9 @@ pub struct BhvNode {
 }
 
 impl BhvNode {
-    pub fn new(list: &HitableList, time0: f64, time1: f64) -> BhvNode {
+    pub fn new(list: &HitableList, time0: f64, time1: f64) -> Self {
         let len = list.objects.len();
-        BhvNode::new_vec(&list.objects, 0, len, time0, time1)
+        Self::new_vec(&list.objects, 0, len, time0, time1)
     }
 
     fn box_compare(a: &Arc<dyn Hitable>, b: &Arc<dyn Hitable>, axis: i32) -> Ordering {
@@ -39,15 +39,15 @@ impl BhvNode {
     }
 
     fn box_x_compare(a: &Arc<dyn Hitable>, b: &Arc<dyn Hitable>) -> Ordering {
-        BhvNode::box_compare(a, b, 0)
+        Self::box_compare(a, b, 0)
     }
 
     fn box_y_compare(a: &Arc<dyn Hitable>, b: &Arc<dyn Hitable>) -> Ordering {
-        BhvNode::box_compare(a, b, 1)
+        Self::box_compare(a, b, 1)
     }
 
     fn box_z_compare(a: &Arc<dyn Hitable>, b: &Arc<dyn Hitable>) -> Ordering {
-        BhvNode::box_compare(a, b, 2)
+        Self::box_compare(a, b, 2)
     }
 
     pub fn new_vec(
@@ -56,7 +56,7 @@ impl BhvNode {
         end: usize,
         time0: f64,
         time1: f64,
-    ) -> BhvNode {
+    ) -> Self {
         let left;
         let right;
         let aabb;
@@ -66,11 +66,11 @@ impl BhvNode {
 
         let axis = fastrand::i32(0..3);
         let comparator = if axis == 0 {
-            BhvNode::box_x_compare
+            Self::box_x_compare
         } else if axis == 1 {
-            BhvNode::box_y_compare
+            Self::box_y_compare
         } else {
-            BhvNode::box_z_compare
+            Self::box_z_compare
         };
 
         if end == 1 {
@@ -80,8 +80,8 @@ impl BhvNode {
             list.sort_by(|a, b| comparator(a, b));
 
             let mid = (start + end) / 2;
-            left = Arc::new(BhvNode::new_vec(&list, start, mid, time0, time1));
-            right = Arc::new(BhvNode::new_vec(&list, mid, end, time0, time1));
+            left = Arc::new(Self::new_vec(&list, start, mid, time0, time1));
+            right = Arc::new(Self::new_vec(&list, mid, end, time0, time1));
         }
 
         let mut lbox = Aabb::blank();
@@ -90,7 +90,7 @@ impl BhvNode {
         right.bounding_box(time0, time1, &mut rbox);
         aabb = Aabb::surrounding_box(&lbox, &rbox);
 
-        BhvNode {
+        Self {
             left: left,
             right: right,
             aabb: aabb,

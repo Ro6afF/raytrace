@@ -13,8 +13,8 @@ pub struct Dielectric {
 }
 
 impl Dielectric {
-    pub fn new(refraction_index: f64, albedo: Arc<dyn Texture>) -> Dielectric {
-        Dielectric {
+    pub fn new(refraction_index: f64, albedo: Arc<dyn Texture>) -> Self {
+        Self {
             refraction_index: refraction_index,
             albedo: albedo,
         }

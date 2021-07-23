@@ -16,8 +16,8 @@ pub struct Triangle {
 }
 
 impl Triangle {
-    pub fn new(p1: Point, p2: Point, p3: Point, material: Arc<dyn Material>) -> Triangle {
-        Triangle {
+    pub fn new(p1: Point, p2: Point, p3: Point, material: Arc<dyn Material>) -> Self {
+        Self {
             p1: p1,
             p2: p2,
             p3: p3,

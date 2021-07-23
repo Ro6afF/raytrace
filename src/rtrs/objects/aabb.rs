@@ -8,12 +8,12 @@ pub struct Aabb {
 }
 
 impl Aabb {
-    pub fn new(min: Point, max: Point) -> Aabb {
-        Aabb { min: min, max: max }
+    pub fn new(min: Point, max: Point) -> Self {
+        Self { min: min, max: max }
     }
 
-    pub fn blank() -> Aabb {
-        Aabb::new(Point::new(0.0, 0.0, 0.0), Point::new(0.0, 0.0, 0.0))
+    pub fn blank() -> Self {
+        Self::new(Point::new(0.0, 0.0, 0.0), Point::new(0.0, 0.0, 0.0))
     }
 
     pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
@@ -39,7 +39,7 @@ impl Aabb {
         true
     }
 
-    pub fn surrounding_box(a: &Aabb, b: &Aabb) -> Aabb {
+    pub fn surrounding_box(a: &Self, b: &Self) -> Self {
         let mut small = a.min;
         let mut big = a.max;
 
@@ -66,6 +66,6 @@ impl Aabb {
         if big.z < b.max.z {
             big.z = b.max.z;
         }
-        Aabb::new(small, big)
+        Self::new(small, big)
     }
 }

@@ -10,7 +10,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn new(filename: &str, width: i32, height: i32) -> Image {
+    pub fn new(filename: &str, width: i32, height: i32) -> Self {
         let mut file = File::create(filename).unwrap();
         file.write(format!("P3\n{} {}\n{}\n", width, height, 255).as_bytes())
             .unwrap();
@@ -24,7 +24,7 @@ impl Image {
             }
         }
 
-        Image {
+        Self {
             file: file,
             image: img,
             width: width,
