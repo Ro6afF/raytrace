@@ -1,8 +1,8 @@
-use super::super::Ray;
-use super::Aabb;
-use super::HitRecord;
-use super::Hitable;
-use super::HitableList;
+use crate::rtrs::objects::Aabb;
+use crate::HitRecord;
+use crate::Hitable;
+use crate::HitableList;
+use crate::Ray;
 use std::cmp::Ordering;
 use std::sync::Arc;
 

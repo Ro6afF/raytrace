@@ -1,6 +1,6 @@
-use super::super::Point;
-use super::super::Ray;
-use super::super::Vector;
+use crate::Point;
+use crate::Ray;
+use crate::Vector;
 
 pub struct Camera {
     origin: Point,

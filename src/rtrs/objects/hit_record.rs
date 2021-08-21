@@ -1,7 +1,7 @@
-use super::super::materials::Material;
-use super::super::Point;
-use super::super::Ray;
-use super::super::Vector;
+use crate::Material;
+use crate::Point;
+use crate::Ray;
+use crate::Vector;
 use std::sync::Arc;
 
 #[derive(Debug)]

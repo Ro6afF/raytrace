@@ -1,5 +1,6 @@
 mod rtrs;
 
+use crate::rtrs::objects::translation::Translation;
 use rayon::prelude::*;
 use rtrs::materials::Dielectric;
 use rtrs::materials::DiffuseLight;
@@ -151,7 +152,10 @@ fn random_scene() -> HitableList {
         )),
     )));
 
-    world.add(Arc::new(Model::from_file("test.obj")));
+    world.add(Arc::new(Translation::new(
+        Arc::new(Model::from_file("test.obj")),
+        Vector::new(0.0, 1.2, 2.3),
+    )));
 
     world
 }

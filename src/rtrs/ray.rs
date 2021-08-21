@@ -1,5 +1,5 @@
-use super::vector::Point;
-use super::vector::Vector;
+use crate::Point;
+use crate::Vector;
 
 pub struct Ray {
     pub origin: Point,

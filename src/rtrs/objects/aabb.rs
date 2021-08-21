@@ -1,5 +1,5 @@
-use super::super::Point;
-use super::super::Ray;
+use crate::Point;
+use crate::Ray;
 
 #[derive(Debug)]
 pub struct Aabb {

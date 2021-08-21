@@ -1,6 +1,6 @@
-use super::super::Ray;
 use super::Aabb;
 use super::HitRecord;
+use crate::Ray;
 
 pub trait Hitable: std::fmt::Debug + Send + Sync {
     fn hit(&self, r: &Ray, t_min: f64, t_max: f64, record: &mut HitRecord) -> bool;

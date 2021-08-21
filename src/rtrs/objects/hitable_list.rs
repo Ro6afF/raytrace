@@ -1,12 +1,12 @@
-use super::super::materials::Metal;
-use super::super::textures::SolidColor;
-use super::super::Color;
-use super::super::Point;
-use super::super::Ray;
 use super::Aabb;
 use super::HitRecord;
 use super::Hitable;
 use super::Triangle;
+use crate::Color;
+use crate::Metal;
+use crate::Point;
+use crate::Ray;
+use crate::SolidColor;
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 use std::sync::Arc;
@@ -47,9 +47,10 @@ impl HitableList {
                             p1,
                             p2,
                             p3,
-                            Arc::new(Metal::new(Arc::new(SolidColor::new(Color::new(
-                                0.2, 0.3, 0.1,
-                            ))), 0.5)),
+                            Arc::new(Metal::new(
+                                Arc::new(SolidColor::new(Color::new(0.2, 0.3, 0.1))),
+                                0.5,
+                            )),
                         )))
                     }
                     _ => {}

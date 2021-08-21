@@ -1,9 +1,9 @@
-use super::super::objects::HitRecord;
-use super::super::textures::Texture;
-use super::super::Color;
-use super::super::Point;
-use super::super::Ray;
 use super::Material;
+use crate::rtrs::textures::Texture;
+use crate::Color;
+use crate::HitRecord;
+use crate::Point;
+use crate::Ray;
 use std::sync::Arc;
 
 #[derive(Debug)]

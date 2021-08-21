@@ -1,7 +1,7 @@
-use super::super::objects::HitRecord;
-use super::super::Color;
-use super::super::Point;
-use super::super::Ray;
+use crate::Color;
+use crate::HitRecord;
+use crate::Point;
+use crate::Ray;
 
 pub trait Material: std::fmt::Debug + Send + Sync {
     fn scatter(

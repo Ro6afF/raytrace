@@ -1,10 +1,10 @@
-use super::super::materials::Material;
-use super::super::objects::HitRecord;
-use super::super::Point;
-use super::super::Ray;
-use super::super::Vector;
 use super::Aabb;
 use super::Hitable;
+use crate::HitRecord;
+use crate::Material;
+use crate::Point;
+use crate::Ray;
+use crate::Vector;
 use std::sync::Arc;
 
 #[derive(Debug)]

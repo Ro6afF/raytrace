@@ -1,6 +1,6 @@
-use super::super::Color;
-use super::super::Point;
-use super::Texture;
+use crate::rtrs::textures::Texture;
+use crate::Color;
+use crate::Point;
 
 #[derive(Debug)]
 pub struct SolidColor {
