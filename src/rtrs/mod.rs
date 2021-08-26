@@ -1,15 +1,15 @@
 mod color;
-pub use self::color::Color;
+pub use color::Color;
 
 mod ppm;
-pub use self::ppm::Image;
+pub use ppm::Image;
 
 mod vector;
-pub use self::vector::Point;
-pub use self::vector::Vector;
+pub use vector::Point;
+pub use vector::Vector;
 
 mod ray;
-pub use self::ray::Ray;
+pub use ray::Ray;
 
 pub mod materials;
 pub mod objects;

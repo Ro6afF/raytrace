@@ -1,6 +1,7 @@
 mod rtrs;
 
-use crate::rtrs::objects::translation::Translation;
+use crate::rtrs::objects::transformations::Rotation;
+use crate::rtrs::objects::transformations::Translation;
 use rayon::prelude::*;
 use rtrs::materials::Dielectric;
 use rtrs::materials::DiffuseLight;
@@ -82,6 +83,7 @@ fn random_scene() -> HitableList {
         ))))),
     )));
 
+    // Balls
     for i in -13..13 {
         for j in -13..13 {
             let mat_choise = fastrand::f64();
@@ -126,6 +128,7 @@ fn random_scene() -> HitableList {
         }
     }
 
+    // Big balls
     world.add(Arc::new(Sphere::new(
         Point::new(0.0, 1.0, 0.0),
         1.0,
@@ -152,8 +155,14 @@ fn random_scene() -> HitableList {
         )),
     )));
 
+    // Monkey
     world.add(Arc::new(Translation::new(
-        Arc::new(Model::from_file("test.obj")),
+        Arc::new(Rotation::new_deg(
+            Arc::new(Model::from_file("test.obj")),
+            45.0,
+            0.0,
+            0.0,
+        )),
         Vector::new(0.0, 1.2, 2.3),
     )));
 
@@ -166,8 +175,8 @@ fn main() {
     let height = 600;
     let width = (height as f64 * aspect_ratio) as i32;
     let img = Mutex::new(Image::new("asdf.ppm", width, height));
-    let spp = 1000;
-    let max_depth = 50;
+    let spp = 3;
+    let max_depth = 3;
 
     let cam = Camera::new(
         Point::new(13.0, 2.0, 3.0),

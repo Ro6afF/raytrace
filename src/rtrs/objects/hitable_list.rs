@@ -1,8 +1,8 @@
-use super::Aabb;
-use super::HitRecord;
-use super::Hitable;
-use super::Triangle;
+use crate::rtrs::objects::solids::Triangle;
+use crate::rtrs::objects::Aabb;
 use crate::Color;
+use crate::HitRecord;
+use crate::Hitable;
 use crate::Metal;
 use crate::Point;
 use crate::Ray;
